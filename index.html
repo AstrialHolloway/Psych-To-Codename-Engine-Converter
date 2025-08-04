@@ -435,9 +435,9 @@
           else layers.mid.push(s.line);
         }
 
-        layers.chars.push(`<gf pos="${gfPos[0]},${gfPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
-        layers.chars.push(`<dad pos="${dadPos[0]},${dadPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
-        layers.chars.push(`<bf pos="${bfPos[0]},${bfPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<gf pos="${gfPos[0]},${gfPos[1]}" scale="${charScales.gf}" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<dad pos="${dadPos[0]},${dadPos[1]}" scale="${charScales.dad}" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<bf pos="${bfPos[0]},${bfPos[1]}" scale="${charScales.bf}" scroll="1,1" layer="chars"/>`);
 
         const xml = `<!DOCTYPE codename-engine-stage>
 <stage zoom="${zoom}" scrollspeed="${scrollspeed}">
