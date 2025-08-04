@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psych → Codename Engine Converter</title>
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Psych → Codename Engine Converter">
+  <meta property="og:description" content="Convert your Psych Engine stage files to Codename Engine XML format with organized layers. Upload JSON and LUA files to get started.">
+  <meta property="og:image" content="/image for open graph.png">
+  <meta property="og:url" content="">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Psych → Codename Engine Converter">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Psych → Codename Engine Converter">
+  <meta name="twitter:description" content="Convert your Psych Engine stage files to Codename Engine XML format with organized layers.">
+  <meta name="twitter:image" content="/image for open graph.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #e94560;
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(233, 69, 96, 0.1);
+      border: 1px solid rgba(233, 69, 96, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(45deg, #e94560, #f27121);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      margin: 1rem 0;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: block;
+      padding: 1rem;
+      background: linear-gradient(135deg, #0f3460, #533483);
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      border: 2px solid transparent;
+    }
+
+    .file-input-label:hover {
+      background: linear-gradient(135deg, #533483, #0f3460);
+      border-color: #e94560;
+      transform: translateY(-2px);
+    }
+
+    .file-input-label.has-file {
+      background: linear-gradient(135deg, #e94560, #f27121);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    button {
+      flex: 1;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #e94560, #f27121);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(233, 69, 96, 0.3);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    textarea {
+      width: 100%;
+      height: 400px;
+      background: #0a0a0a;
+      color: #00ff41;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 1rem;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #e94560;
+      box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+    }
+
+    .status {
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .status.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status.success {
+      background: rgba(46, 204, 113, 0.2);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+
+    .status.error {
+      background: rgba(231, 76, 60, 0.2);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+    }
+
+    @media (max-width: 768px) {
+      .button-group {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Psych → Codename Engine Converter</h1>
+
+    <div class="file-input-wrapper">
+      <input type="file" id="jsonInput" accept=".json" class="file-input">
+      <label for="jsonInput" class="file-input-label" id="jsonLabel">
+        📁 Select Stage JSON file
+      </label>
+    </div>
+
+    <div class="file-input-wrapper">
+      <input type="file" id="luaInput" accept=".lua" class="file-input">
+      <label for="luaInput" class="file-input-label" id="luaLabel">
+        📜 Select Stage LUA file
+      </label>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <div class="button-group">
+      <button onclick="convert()" id="convertBtn" disabled>✨ Convert to Codename</button>
+      <button onclick="download()" id="downloadBtn" disabled>💾 Download XML</button>
+    </div>
+
+    <textarea id="output" placeholder="🚀 Your converted .xml file with organized layers will appear here...
+
+💡 Upload both files (JSON and LUA) to start conversion"></textarea>
+    
+    <div style="text-align: center; margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">
+      Created by <span style="color: #e94560; font-weight: 700;">OranGy</span>
+    </div>
+  </div>
+
+  <audio id="clickSound" preload="auto">
+    <source src="/mouse-click-290204.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="elevatorMusic" preload="auto" loop>
+    <source src="/Elevator Music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let jsonContent = null;
+    let luaContent = null;
+    let stageName = "stage_codename";
+    let musicPlaying = false;
+
+    // Start background music immediately
+    window.addEventListener('load', function() {
+      const elevatorMusic = document.getElementById('elevatorMusic');
+      elevatorMusic.volume = 0.2;
+      elevatorMusic.play().catch(() => {
+        // Auto-play might be blocked, music will start on first user interaction
+      });
+      musicPlaying = true;
+    });
+
+    function playSound() {
+      const clickSound = document.getElementById('clickSound');
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function showStatus(message, type) {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = `status ${type} show`;
+      setTimeout(() => {
+        status.classList.remove('show');
+      }, 3000);
+    }
+
+    function updateButtons() {
+      const convertBtn = document.getElementById('convertBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const hasFiles = jsonContent && luaContent;
+      const hasOutput = document.getElementById('output').value.trim();
+      
+      convertBtn.disabled = !hasFiles;
+      downloadBtn.disabled = !hasOutput;
+    }
+
+    document.getElementById('jsonInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const label = document.getElementById('jsonLabel');
+      
+      if (file) {
+        stageName = file.name.replace(/\.[^/.]+$/, "");
+        label.textContent = `✅ ${file.name}`;
+        label.classList.add('has-file');
+        playSound();
+        
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            jsonContent = JSON.parse(reader.result);
+            showStatus('✅ JSON file loaded successfully', 'success');
+            updateButtons();
+          } catch (error) {
+            showStatus('❌ Error reading JSON file', 'error');
+            jsonContent = null;
+            updateButtons();
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    document.getElementById('luaInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const label = document.getElementById('luaLabel');
+      
+      if (file) {
+        if (!stageName || stageName === "stage_codename") {
+          stageName = file.name.replace(/\.[^/.]+$/, "");
+        }
+        label.textContent = `✅ ${file.name}`;
+        label.classList.add('has-file');
+        playSound();
+        
+        const reader = new FileReader();
+        reader.onload = () => {
+          luaContent = reader.result;
+          showStatus('✅ LUA file loaded successfully', 'success');
+          updateButtons();
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function extractSpritesFromLua(luaText) {
+      const regex = /makeLuaSprite\(['"](\w+)['"],\s*['"]([^'"]+)['"],\s*(-?\d+),\s*(-?\d+)/g;
+      const scaleRegex = /scaleObject\(['"](\w+)['"],\s*([\d.]+),\s*([\d.]+)\)/g;
+      const scrollRegex = /setScrollFactor\(['"](\w+)['"],\s*([\d.]+),\s*([\d.]+)\)/g;
+
+      const sprites = [];
+      const scales = {};
+      const scrolls = {};
+
+      for (const match of luaText.matchAll(scaleRegex)) {
+        scales[match[1]] = `${match[2]},${match[3]}`;
+      }
+      for (const match of luaText.matchAll(scrollRegex)) {
+        scrolls[match[1]] = `${match[2]},${match[3]}`;
+      }
+
+      let index = 0;
+      for (const match of luaText.matchAll(regex)) {
+        const name = match[1];
+        const path = match[2];
+        const x = match[3];
+        const y = match[4];
+        const scale = scales[name] || "1,1";
+        const scroll = scrolls[name] || "1,1";
+        let layer = "mid";
+
+        if (index < 3) layer = "bg";
+        else if (index > 5) layer = "fg";
+
+        sprites.push({ line: `<sprite sprite="${path}" name="${name}" pos="${x},${y}" scale="${scale}" scroll="${scroll}" layer="${layer}"/>`, order: index, layer });
+        index++;
+      }
+
+      return sprites;
+    }
+
+    function convert() {
+      if (!jsonContent || !luaContent) {
+        showStatus('❌ Missing files for conversion', 'error');
+        return;
+      }
+
+      playSound();
+      
+      // Don't restart music during conversion, let it play continuously
+      const elevatorMusic = document.getElementById('elevatorMusic');
+      if (!musicPlaying) {
+        elevatorMusic.volume = 0.2;
+        elevatorMusic.play();
+        musicPlaying = true;
+      }
+
+      // Simulate processing time for dramatic effect
+      setTimeout(() => {
+        const zoom = jsonContent.defaultZoom || 1.0;
+        const scrollspeed = jsonContent.camera_speed || 1.0;
+        const bfPos = jsonContent.boyfriend || [0,0];
+        const gfPos = jsonContent.girlfriend || [0,0];
+        const dadPos = jsonContent.opponent || [0,0];
+
+        const sprites = extractSpritesFromLua(luaContent);
+
+        // Organizar por capa
+        const layers = {
+          bg: [],
+          mid: [],
+          fg: [],
+          chars: []
+        };
+
+        for (const s of sprites) {
+          if (layers[s.layer]) layers[s.layer].push(s.line);
+          else layers.mid.push(s.line);
+        }
+
+        layers.chars.push(`<gf pos="${gfPos[0]},${gfPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<dad pos="${dadPos[0]},${dadPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<bf pos="${bfPos[0]},${bfPos[1]}" scale="1.0" scroll="1,1" layer="chars"/>`);
+
+        const xml = `<!DOCTYPE codename-engine-stage>
+<stage zoom="${zoom}" scrollspeed="${scrollspeed}">
+\t<layer name="bg"/>
+\t<layer name="mid"/>
+\t<layer name="fg"/>
+\t<layer name="chars"/>
+
+\t${layers.bg.join("\n\t")}
+\t${layers.mid.join("\n\t")}
+\t${layers.fg.join("\n\t")}
+\t${layers.chars.join("\n\t")}
+</stage>`;
+
+        document.getElementById("output").value = xml;
+        showStatus('🎉 Conversion completed successfully!', 'success');
+        updateButtons();
+        
+        // Don't stop music, let it continue playing
+      }, 1500);
+    }
+
+    function download() {
+      const text = document.getElementById("output").value;
+      if (!text.trim()) {
+        showStatus('❌ No content to download', 'error');
+        return;
+      }
+      
+      playSound();
+      const blob = new Blob([text], { type: "application/xml" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = stageName + ".xml";
+      a.click();
+      
+      showStatus('💾 File downloaded successfully!', 'success');
+    }
+
+    // Initialize button states
+    updateButtons();
+  </script>
+</body>
+</html>
