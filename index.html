@@ -389,6 +389,20 @@
       }
 
       playSound();
+      // charscale
+      const charScales = {
+        bf: "1.0",
+        gf: "1.0",
+        dad: "1.0"
+      };
+
+      const charScaleRegex = /scaleObject\(['"](bf|gf|dad)['"],\s*([\d.]+),\s*([\d.]+)\)/g;
+      for (const match of luaContent.matchAll(charScaleRegex)) {
+        const char = match[1];
+        const scaleX = parseFloat(match[2]).toFixed(2);
+        // const scaleY = parseFloat(match[3]).toFixed(2); ← ignorado
+        charScales[char] = scaleX; // Usamos solo el X para Codename
+      }
       
       // Don't restart music during conversion, let it play continuously
       const elevatorMusic = document.getElementById('elevatorMusic');
