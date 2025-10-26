@@ -375,7 +375,7 @@
         if (index < 3) layer = "bg";
         else if (index > 5) layer = "fg";
 
-        sprites.push({ line: `<sprite sprite="${path}" name="${name}" pos="${x},${y}" scale="${scale}" scroll="${scroll}" layer="${layer}"/>`, order: index, layer });
+        sprites.push({ line: `<sprite sprite="${path}" name="${name}" x="${x}" y="${y}" scale="${scale}" scroll="${scroll}" layer="${layer}"/>`, order: index, layer });
         index++;
       }
 
@@ -435,9 +435,9 @@
           else layers.mid.push(s.line);
         }
 
-        layers.chars.push(`<gf pos="${gfPos[0]},${gfPos[1]}" scale="${charScales.gf}" scroll="1,1" layer="chars"/>`);
-        layers.chars.push(`<dad pos="${dadPos[0]},${dadPos[1]}" scale="${charScales.dad}" scroll="1,1" layer="chars"/>`);
-        layers.chars.push(`<bf pos="${bfPos[0]},${bfPos[1]}" scale="${charScales.bf}" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<gf x="${gfPos[0]}" y="${gfPos[1]}" scale="${charScales.gf}" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<dad x="${dadPos[0]} y="${dadPos[1]}" scale="${charScales.dad}" scroll="1,1" layer="chars"/>`);
+        layers.chars.push(`<bf x="${bfPos[0]} y="${bfPos[1]}" scale="${charScales.bf}" scroll="1,1" layer="chars"/>`);
 
         const xml = `<!DOCTYPE codename-engine-stage>
 <stage zoom="${zoom}" scrollspeed="${scrollspeed}">
