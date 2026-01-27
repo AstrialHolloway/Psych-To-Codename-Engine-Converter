@@ -247,6 +247,8 @@
     <div style="text-align: center; margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">
       <div>Created by <span style="color: #e94560; font-weight: 700;">OranGy</span></div>
       <div>Edited by <span style="color: #e94560; font-weight: 700;">Astrial</span></div>
+      <div>Update Log: <span style="color: #e94560; font-weight: 700;">v1.0.3</span></div>
+      <div>Addition <span style="color: #e94560; font-weight: 700;">Added "updateHitbox="true"""</span></div>
     </div>
   </div>
 
@@ -376,7 +378,7 @@
         if (index < 3) layer = "bg";
         else if (index > 5) layer = "fg";
 
-        sprites.push({ line: `<sprite sprite="${path}" name="${name}" x="${x}" y="${y}" scale="${scale}" scroll="${scroll}" layer="${layer}"/>`, order: index, layer });
+        sprites.push({ line: `<sprite sprite="${path}" name="${name}" x="${x}" y="${y}" scale="${scale}" scroll="${scroll}" layer="${layer}"/>`, updateHitbox="true", order: index, layer });
         index++;
       }
 
